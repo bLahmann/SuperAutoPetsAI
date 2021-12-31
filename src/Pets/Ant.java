@@ -1,7 +1,13 @@
 package Pets;
 
-import Base.Pet;
-import Base.Utils;
+import Base.*;
+
+import java.lang.invoke.MethodHandle;
+import java.lang.reflect.Method;
+import java.util.ArrayList;
+import java.util.Collections;
+import java.util.List;
+import java.util.Random;
 
 public class Ant extends Pet {
 
@@ -15,6 +21,59 @@ public class Ant extends Pet {
         super("Ant",  Math.round(parameters[1]), Math.round(parameters[2]), Math.round(parameters[3]));
     }
 
+    @Override
+    public Reaction onFaint(Pet faintedPet, boolean onMyTeam) {
+
+        // Check if I'm the fainted pet
+        if (onMyTeam && this.equals(faintedPet)){
+            try {
+                Reaction reaction = new Reaction(this, this.getClass().getMethod("doEffect", Battle.class));
+                return reaction;
+            }catch (NoSuchMethodException e){
+                e.printStackTrace();
+                System.exit(-1);
+            }
+        }
+
+        // Otherwise, ignore this
+        return null;
+    }
+
+    public List<Event> doEffect(Battle battle) {
+
+        int bonusDamage, bonusHealth;
+        if (getLevel() == 1){
+            bonusDamage = Math.round(parameters[4]);
+            bonusHealth = Math.round(parameters[5]);
+        }
+        else if (getLevel() == 2){
+            bonusDamage = Math.round(parameters[6]);
+            bonusHealth = Math.round(parameters[7]);
+        }
+        else {
+            bonusDamage = Math.round(parameters[8]);
+            bonusHealth = Math.round(parameters[9]);
+        }
+
+        // Find what team I'm on
+        List<Pet> myTeam = battle.getTeams().get(0);
+        if (!myTeam.contains(this)){
+            myTeam = battle.getTeams().get(1);
+        }
+
+        List<Pet> eligibleTargets = new ArrayList<>();
+        for (Pet pet : myTeam){
+            if (pet.getHealth() > 0)    eligibleTargets.add(pet);
+        }
+
+        if (!eligibleTargets.isEmpty()) {
+            Pet target = eligibleTargets.get(new Random().nextInt(eligibleTargets.size()));
+            target.giveTempDamage(bonusDamage);
+            target.giveTempHealth(bonusHealth);
+        }
 
 
+        // No new events
+        return new ArrayList<>();
+    }
 }
