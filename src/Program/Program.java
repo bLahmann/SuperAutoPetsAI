@@ -23,11 +23,14 @@ public class Program {
         List<Pet> teamA = new ArrayList<>();
         teamA.add(new Cricket());
         teamA.add(new Ant());
-        teamA.add(new Ant());
+        teamA.add(new Horse());
 
         List<Pet> teamB = new ArrayList<>();
-        teamB.add(new Ant());
-        teamB.add(new Ant());
+        teamB.add(new Mosquito());
+
+        Dodo dodo = new Dodo();
+        dodo.giveTempDamage(10);
+        teamB.add(dodo);
         teamB.add(new Ant());
 
         Battle battle = new Battle(teamA, teamB);

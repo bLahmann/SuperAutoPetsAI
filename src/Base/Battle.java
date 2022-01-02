@@ -25,8 +25,6 @@ public class Battle {
         resolveReactions(reactions);
         if (getResult() != RESULT.ONGOING)  return getResult();
 
-        if (Program.DEBUG) System.out.println("After Battle Start Reactions: " + this);
-
         // Damage phase
         while (getResult() == RESULT.ONGOING) {
 
@@ -55,7 +53,6 @@ public class Battle {
             if (getResult() != RESULT.ONGOING) return getResult();
             if (Program.DEBUG) System.out.println("After Damage: " + this);
             resolveReactions(reactions);
-            if (Program.DEBUG) System.out.println("After Reactions : " + this);
         }
 
         // Return
@@ -159,12 +156,15 @@ public class Battle {
 
             // Summon pet reactions
             else if (event.type == Event.TYPE.SUMMONED_PET){
-                reactions.addAll(checkForHurtPetReactions(event.affectedPet, teamIndex));
+                reactions.addAll(checkForSummonPetReactions(event.affectedPet, teamIndex));
             }
         }
 
         // We can safely remove fainted pets
         clearFaintedPets();
+
+        // Debug
+        if (Program.DEBUG) System.out.println("After Reactions : " + this);
 
         // Check to see if the battle is over
         if (getResult() != RESULT.ONGOING)  return;

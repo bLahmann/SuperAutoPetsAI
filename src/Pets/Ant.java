@@ -25,9 +25,10 @@ public class Ant extends Pet {
     public Reaction onFaint(Pet faintedPet, boolean onMyTeam) {
 
         // Check if I'm the fainted pet
-        if (onMyTeam && this.equals(faintedPet)){
+        if (this.equals(faintedPet)){
             try {
-                Reaction reaction = new Reaction(this, this.getClass().getMethod("doEffect", Battle.class));
+                Reaction reaction = new Reaction(this, faintedPet,
+                        this.getClass().getMethod("doEffect", Pet.class, Battle.class));
                 return reaction;
             }catch (NoSuchMethodException e){
                 e.printStackTrace();
@@ -39,20 +40,20 @@ public class Ant extends Pet {
         return null;
     }
 
-    public List<Event> doEffect(Battle battle) {
+    public List<Event> doEffect(Pet faintedPet, Battle battle) {
 
-        int bonusDamage, bonusHealth;
+        int damageBuff, healthBuff;
         if (getLevel() == 1){
-            bonusDamage = Math.round(parameters[4]);
-            bonusHealth = Math.round(parameters[5]);
+            damageBuff = Math.round(parameters[4]);
+            healthBuff = Math.round(parameters[5]);
         }
         else if (getLevel() == 2){
-            bonusDamage = Math.round(parameters[6]);
-            bonusHealth = Math.round(parameters[7]);
+            damageBuff = Math.round(parameters[6]);
+            healthBuff = Math.round(parameters[7]);
         }
         else {
-            bonusDamage = Math.round(parameters[8]);
-            bonusHealth = Math.round(parameters[9]);
+            damageBuff = Math.round(parameters[8]);
+            healthBuff = Math.round(parameters[9]);
         }
 
         // Find what team I'm on
@@ -68,8 +69,8 @@ public class Ant extends Pet {
 
         if (!eligibleTargets.isEmpty()) {
             Pet target = eligibleTargets.get(new Random().nextInt(eligibleTargets.size()));
-            target.giveTempDamage(bonusDamage);
-            target.giveTempHealth(bonusHealth);
+            target.giveTempDamage(damageBuff);
+            target.giveTempHealth(healthBuff);
         }
 
 

@@ -22,9 +22,10 @@ public class Cricket extends Pet {
     public Reaction onFaint(Pet faintedPet, boolean onMyTeam) {
 
         // Check if I'm the fainted pet
-        if (onMyTeam && this.equals(faintedPet)){
+        if (this.equals(faintedPet)){
             try {
-                Reaction reaction = new Reaction(this, this.getClass().getMethod("doEffect", Battle.class));
+                Reaction reaction = new Reaction(this, faintedPet,
+                        this.getClass().getMethod("doEffect", Pet.class, Battle.class));
                 return reaction;
             }catch (NoSuchMethodException e){
                 e.printStackTrace();
@@ -36,7 +37,7 @@ public class Cricket extends Pet {
         return null;
     }
 
-    public List<Event> doEffect(Battle battle) {
+    public List<Event> doEffect(Pet faintedPet, Battle battle) {
 
         int summonDamage, summonHealth;
         if (getLevel() == 1){
